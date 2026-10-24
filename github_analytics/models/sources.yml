@@ -1,0 +1,64 @@
+sources:
+  - name: dbt_github_source
+    database: github-proj-508123
+    schema: bronze
+    tables:
+      - name: pull_requests
+        config:
+          loaded_at_query: "select max(timestamp(ingested_at)) from {{ this }}"
+          freshness:
+            warn_after:
+              count: 100
+              period: hour
+            error_after:
+              count: 200
+              period: hour
+
+      - name: reviews
+        config:
+          loaded_at_query: "select max(timestamp(ingested_at)) from {{ this }}"
+          freshness: 
+            warn_after:
+              count: 26
+              period: hour
+            error_after:
+              count: 48
+              period: hour
+
+models:
+  - name: stg_pull_requests
+    description: inof on pull_requests
+    columns:
+      - name: pr_id
+        data_tests:
+          - not_null
+          - unique
+
+  - name: stg_reviews
+    description: info on reviwes
+    columns:
+
+      - name: review_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: pr_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref("stg_pull_requests")
+                field: pr_id
+
+      - name: review_state
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - approved
+                  - commented
+                  - changes_requested
+                  - dismissed
+              config:
+                severity: warn

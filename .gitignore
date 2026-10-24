@@ -1,0 +1,40 @@
+# Virtual environments
+airflow_env/
+dbt_env/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Credentials and environment configuration
+.env
+.env.*
+!.env.example
+*.json
+github-proj.json
+*service-account*.json
+*credentials*.json
+*.csv
+*.pem
+*.key
+profiles.yml
+
+# dbt generated files
+**/target/
+**/dbt_packages/
+**/logs/
+
+# Airflow local state
+airflow.db
+airflow.db-*
+airflow.cfg
+airflow-webserver.pid
+standalone_admin_password.txt
+
+# Generated datasets
+*.csv
+*.parquet
+
+# Local files
+.DS_Store
+.pytest_cache/

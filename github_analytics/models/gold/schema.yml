@@ -1,0 +1,173 @@
+version: 2
+
+models:
+  - name: fct_pr_metrics
+    description: 
+      One row per pull request. Combines pull-request attributes with
+      aggregated submitted-review activity. This model supports PR outcome,
+      size, review-efficiency, and merge-efficiency analysis.
+
+    columns:
+      - name: pr_id
+        description: Globally unique GitHub pull-request identifier.
+        data_tests:
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: ref('stg_pull_requests')
+                field: pr_id
+
+      - name: repo_id
+        description: Stable GitHub repository identifier.
+        data_tests:
+          - not_null
+
+      - name: repo_name
+        description: Repository name recorded during extraction.
+        data_tests:
+          - not_null
+
+      - name: pull_number
+        description: >
+          Pull-request number. This number is unique only within a repository.
+        data_tests:
+          - not_null
+
+      - name: pr_state
+        description: Source PR state standardized as open or closed.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - open
+                  - closed
+
+      - name: is_merged
+        description: True when merged_at is populated.
+        data_tests:
+          - not_null
+
+      - name: pr_outcome
+        description: >
+          Analytical PR outcome derived as open, merged, or
+          closed_not_merged.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - open
+                  - merged
+                  - closed_not_merged
+
+      - name: created_at
+        description: Timestamp when the pull request was created.
+        data_tests:
+          - not_null
+
+      - name: first_review_at
+        description: >
+          Earliest submitted review timestamp. This includes approved,
+          commented, and changes-requested review events. It does not include
+          ordinary PR conversation comments. Null when no submitted review
+          was extracted.
+
+      - name: total_reviews
+        description: Number of submitted review events associated with the PR.
+        data_tests:
+          - not_null
+
+      - name: unique_reviewers
+        description: Number of distinct reviewer IDs associated with the PR.
+        data_tests:
+          - not_null
+
+      - name: ever_approved
+        description: >
+          True when at least one extracted review has the approved state.
+          This means ever approved, not necessarily currently approved.
+        data_tests:
+          - not_null
+
+      - name: time_to_first_review_hours
+        description: >
+          Hours between PR creation and its first submitted review.
+          Null for PRs without a submitted review.
+
+      - name: time_to_merge_hours
+        description: >
+          Hours between PR creation and merge. Null for open PRs and
+          closed-but-not-merged PRs.
+
+      - name: total_changes
+        description: Total PR line changes calculated as additions plus deletions.
+
+      - name: ingested_at
+        description: UTC timestamp shared by records from the extraction run.
+        data_tests:
+          - not_null
+
+
+  - name: mart_monthly_repo_activities
+    description: >
+      One row per repository and event month. Each metric is attributed to
+      the month of its relevant event: created PRs by created_at, first-review
+      metrics by first_review_at, merged metrics by merged_at, and
+      closed-without-merging metrics by closed_at.
+
+      The current development extraction covers only part of September 2026,
+      approximately September 7 through September 10. September values must
+      not be interpreted as complete monthly totals.
+
+    columns:
+      - name: repo_id
+        description: Stable GitHub repository identifier.
+        data_tests:
+          - not_null
+
+      - name: repo_name
+        description: Repository name used for display.
+        data_tests:
+          - not_null
+
+      - name: reporting_month
+        description: >
+          Calendar month to which each event-based metric is attributed.
+        data_tests:
+          - not_null
+
+      - name: created_prs
+        description: Number of PRs created during the reporting month.
+        data_tests:
+          - not_null
+
+      - name: first_reviewed_prs
+        description: >
+          Number of PRs receiving their first submitted review during the
+          reporting month.
+        data_tests:
+          - not_null
+
+      - name: avg_time_to_first_review_hours
+        description: >
+          Average creation-to-first-review time for PRs receiving their first
+          submitted review during the reporting month. Null when there are no
+          qualifying PRs.
+
+      - name: merged_prs
+        description: Number of PRs merged during the reporting month.
+        data_tests:
+          - not_null
+
+      - name: avg_time_to_merge_hours
+        description: >
+          Average creation-to-merge time for PRs merged during the reporting
+          month. Null when there are no qualifying PRs.
+
+      - name: closed_unmerged_prs
+        description: >
+          Number of PRs closed without merging during the reporting month.
+        data_tests:
+          - not_null
