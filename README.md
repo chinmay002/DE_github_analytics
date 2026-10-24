@@ -4,7 +4,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white) ![BigQuery](https://img.shields.io/badge/BigQuery-Warehouse-4285F4?logo=googlebigquery&logoColor=white) ![dbt](https://img.shields.io/badge/dbt-Transformations-FF694B?logo=dbt&logoColor=white) ![Airflow](https://img.shields.io/badge/Apache_Airflow-Orchestration-017CEE?logo=apacheairflow&logoColor=white) ![GCS](https://img.shields.io/badge/Google_Cloud_Storage-Parquet-4285F4?logo=googlecloud&logoColor=white)
 
-> **Project status:** Complete for its intended learning scope. This repository demonstrates batch ingestion, reliability and recovery, warehouse modeling, and data-quality engineering—not a deployed real-time analytics service.
+> **Project status:** This repository demonstrates batch ingestion, reliability and recovery, warehouse modeling, and data-quality engineering—not a deployed real-time analytics service.
 
 ## Overview
 
@@ -181,4 +181,4 @@ This is a deliberately scoped **batch analytics engineering project**. The follo
 - Large-scale partitioning, clustering, or repository-level isolation.
 - Streaming ingestion.
 
-The project is considered complete for its intended learning objectives. Further implementation should be driven by demonstrated correctness problems or concrete operational requirements, not feature accumulation.
+
